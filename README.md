@@ -2,8 +2,7 @@
 
 # Changes
 
-Version 2.0.0 introduces uses wait_for_it script for the cluster startup
-
+This is the data hub 2 version
 # Hadoop Docker
 
 ## Supported Hadoop Versions
