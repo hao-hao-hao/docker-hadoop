@@ -80,9 +80,9 @@ services:
       - ./hadoop.env
 
   hive-metastore-postgresql:
-    image: bde2020/hive-metastore-postgresql:2.3.0
+    image: bde2020/hive-metastore-postgresql:3.1.0
   hive-metastore:
-    image: bde2020/hive:2.3.2-postgresql-metastore
+    image: haleluohao/docker-hive:3.1.1
     env_file:
       - ./hadoop.env
     command: /opt/hive/bin/hive --service metastore
@@ -90,7 +90,7 @@ services:
       SERVICE_PRECONDITION: "namenode:9870 datanode01:9864 datanode02:9864 hive-metastore-postgresql:5432"
 
   hive-server:
-    image: bde2020/hive:2.3.2-postgresql-metastore
+    image: haleluohao/docker-hive:3.1.1
     env_file:
       - ./hadoop.env
     environment:
