@@ -102,6 +102,16 @@ services:
     ports:
       - "10000:10000"
 
+  spark-master:
+    image: bde2020/spark-master:2.3.2-hadoop3.1.1-java8
+    container_name: spark-master
+    environment:
+      SERVICE_PRECONDITION: "hive-metastore:9083"
+    env_file:
+      - ./hadoop.env
+    ports:
+      - "8080:8080"
+      - "7077:7077"
        
 volumes:
   hadoop_namenode:
