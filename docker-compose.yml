@@ -1,9 +1,9 @@
-version: "3"
+version: "3.5"
 
 services:
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.1.1-java8
-    container_name: namenode
+    container_name: name-node
     restart: always
     ports:
       - 9870:9870
@@ -17,7 +17,7 @@ services:
 
   datanode01:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.1-java8
-    container_name: datanode01
+    container_name: data-node01
     restart: always
     volumes:
       - hadoop_datanode01:/hadoop/dfs/data
@@ -28,7 +28,7 @@ services:
   
   datanode02:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.1.1-java8
-    container_name: datanode02
+    container_name: data-node02
     restart: always
     volumes:
       - hadoop_datanode02:/hadoop/dfs/data
@@ -36,10 +36,10 @@ services:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
       - ./hadoop.env
- 
+
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.1.1-java8
-    container_name: resourcemanager
+    container_name: resource-manager
     ports:
       - 8088:8088
     restart: always
@@ -50,7 +50,7 @@ services:
 
   nodemanager01:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.1-java8
-    container_name: nodemanager01
+    container_name: node-manager01
     restart: always
     environment:
       SERVICE_PRECONDITION: "namenode:9870 datanode01:9864 datanode02:9864 resourcemanager:8088"
@@ -59,16 +59,16 @@ services:
 
   nodemanager02:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.1.1-java8
-    container_name: nodemanager02
+    container_name: node-manager02
     restart: always
     environment:
       SERVICE_PRECONDITION: "namenode:9870 datanode01:9864 datanode02:9864 resourcemanager:8088"
     env_file:
       - ./hadoop.env
-  
+
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.1.1-java8
-    container_name: historyserver
+    container_name: history-server
     restart: always
     ports:
       - 8188:8188
@@ -81,8 +81,11 @@ services:
 
   hive-metastore-postgresql:
     image: bde2020/hive-metastore-postgresql:3.1.0
+    container_name: hive-postgresql
+
   hive-metastore:
     image: haleluohao/docker-hive:3.1.1
+    container_name: hive-metastore
     env_file:
       - ./hadoop.env
     command: /opt/hive/bin/hive --service metastore
@@ -91,16 +94,20 @@ services:
 
   hive-server:
     image: haleluohao/docker-hive:3.1.1
+    container_name: hive-server
     env_file:
       - ./hadoop.env
     environment:
-      HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
       SERVICE_PRECONDITION: "hive-metastore:9083"
     ports:
       - "10000:10000"
+
        
 volumes:
   hadoop_namenode:
   hadoop_datanode01:
   hadoop_datanode02:
   hadoop_historyserver:
+networks:
+  default:
+     name: datahub2
